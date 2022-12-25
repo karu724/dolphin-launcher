@@ -50,7 +50,7 @@ if(!isDev){
                 loggerAutoUpdaterSuccess.log('New update available', info.version)
                 
                 if(process.platform === 'darwin'){
-                    info.darwindownload = `https://github.com/dscalzi/HeliosLauncher/releases/download/v${info.version}/Dolphin-Launcher-setup.dmg`
+                    info.darwindownload = `https://github.com/karu724/dolphin-launcher/releases/download/v${info.version}/Dolphin-Launcher-setup.dmg`
                     showUpdateUI(info)
                 }
                 
