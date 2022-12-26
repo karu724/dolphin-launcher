@@ -86,7 +86,7 @@ function setLaunchEnabled(val){
 
 // Bind launch button
 document.getElementById('launch_button').addEventListener('click', function(e){
-    loggerLanding.log('Launching game..')
+    loggerLanding.log('게임 실행중..')
     const mcVersion = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()
     const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
     if(jExe == null){
@@ -328,13 +328,13 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // If the result is null, no valid Java installation was found.
                 // Show this information to the user.
                 setOverlayContent(
-                    'No Compatible<br>Java Installation Found',
-                    `In order to join WesterosCraft, you need a 64-bit installation of Java ${javaVer}. Would you like us to install a copy?`,
-                    'Install Java',
-                    'Install Manually'
+                    '알 맞는<br>자바설치 없음',
+                    `플레이를 하기 위해서는 자바 ${javaVer}버전이 필요합니다. 자바를 설치하시겠습니까?`,
+                    '자바 설치',
+                    '메뉴얼대로 설치'
                 )
                 setOverlayHandler(() => {
-                    setLaunchDetails('Preparing Java Download..')
+                    setLaunchDetails('자바 다운로드 준비중..')
                     sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())]})
                     sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory(), mcVersion]})
                     toggleOverlay(false)
@@ -344,9 +344,9 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                         //$('#overlayDismiss').toggle(false)
                         setOverlayContent(
                             'Java is Required<br>to Launch',
-                            `A valid x64 installation of Java ${javaVer} is required to launch.<br><br>Please refer to our <a href="https://github.com/dscalzi/HeliosLauncher/wiki/Java-Management#manually-installing-a-valid-version-of-java">Java Management Guide</a> for instructions on how to manually install Java.`,
-                            'I Understand',
-                            'Go Back'
+                            `자바 ${javaVer} 버전이 실행을 위해 필요합니다.<br><br><a href="https://github.com/dscalzi/HeliosLauncher/wiki/Java-Management#manually-installing-a-valid-version-of-java">자바 설치 가이드</a>를 확인하여 자바를 설치해주세요.`,
+                            '확인',
+                            '뒤로가기'
                         )
                         setOverlayHandler(() => {
                             toggleLaunchArea(false)
@@ -381,7 +381,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
             if(m.result === true){
 
                 // Oracle JRE enqueued successfully, begin download.
-                setLaunchDetails('Downloading Java..')
+                setLaunchDetails('자바 다운로드중..')
                 sysAEx.send({task: 'execute', function: 'processDlQueues', argsArr: [[{id:'java', limit:1}]]})
 
             } else {
@@ -389,9 +389,9 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // Oracle JRE enqueue failed. Probably due to a change in their website format.
                 // User will have to follow the guide to install Java.
                 setOverlayContent(
-                    'Unexpected Issue:<br>Java Download Failed',
-                    'Unfortunately we\'ve encountered an issue while attempting to install Java. You will need to manually install a copy. Please check out our <a href="https://github.com/dscalzi/HeliosLauncher/wiki">Troubleshooting Guide</a> for more details and instructions.',
-                    'I Understand'
+                    '알 수 없는 오류:<br>자바 설치실패',
+                    '자바를 설치하는 도중 알 수 없는 오류가 발생하였습니다.<br>자바 설치파일을 다운로드 후 수동으로 실행해주세요.',
+                    '확인'
                 )
                 setOverlayHandler(() => {
                     toggleOverlay(false)
@@ -419,7 +419,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                     remote.getCurrentWindow().setProgressBar(2)
 
                     // Wait for extration to complete.
-                    const eLStr = 'Extracting'
+                    const eLStr = '추출중'
                     let dotStr = ''
                     setLaunchDetails(eLStr)
                     extractListener = setInterval(() => {
@@ -445,7 +445,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                         extractListener = null
                     }
 
-                    setLaunchDetails('Java Installed!')
+                    setLaunchDetails('자바 설치완료')
 
                     if(launchAfter){
                         dlAsync()
@@ -461,7 +461,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
     })
 
     // Begin system Java scan.
-    setLaunchDetails('Checking system info..')
+    setLaunchDetails('시스템 정보 확인중..')
     sysAEx.send({task: 'execute', function: 'validateJava', argsArr: [ConfigManager.getDataDirectory()]})
 
 }
@@ -495,7 +495,7 @@ function dlAsync(login = true){
         }
     }
 
-    setLaunchDetails('Please wait..')
+    setLaunchDetails('잠시만 기다려주세요..')
     toggleLaunchArea(true)
     setLaunchPercentage(0, 100)
 
@@ -526,12 +526,12 @@ function dlAsync(login = true){
     })
     aEx.on('error', (err) => {
         loggerLaunchSuite.error('Error during launch', err)
-        showLaunchFailure('Error During Launch', err.message || 'See console (CTRL + Shift + i) for more details.')
+        showLaunchFailure('시작 도중 오류가 발생함', err.message || '(CTRL + Shift + i)를 눌러 오류를 확인해주세요')
     })
     aEx.on('close', (code, signal) => {
         if(code !== 0){
             loggerLaunchSuite.error(`AssetExec exited with code ${code}, assuming error.`)
-            showLaunchFailure('Error During Launch', 'See console (CTRL + Shift + i) for more details.')
+            showLaunchFailure('시작 도중 오류가 발생함', '(CTRL + Shift + i)를 눌러 오류를 확인해주세요')
         }
     })
 
@@ -542,28 +542,28 @@ function dlAsync(login = true){
             switch(m.data){
                 case 'distribution':
                     setLaunchPercentage(20, 100)
-                    loggerLaunchSuite.log('Validated distibution index.')
-                    setLaunchDetails('Loading version information..')
+                    loggerLaunchSuite.log('배포인덱스 검증됨')
+                    setLaunchDetails('버전 정보 불러오는중..')
                     break
                 case 'version':
                     setLaunchPercentage(40, 100)
-                    loggerLaunchSuite.log('Version data loaded.')
-                    setLaunchDetails('Validating asset integrity..')
+                    loggerLaunchSuite.log('버전 정보 로드됨')
+                    setLaunchDetails('에셋 무결성 검증중..')
                     break
                 case 'assets':
                     setLaunchPercentage(60, 100)
-                    loggerLaunchSuite.log('Asset Validation Complete')
-                    setLaunchDetails('Validating library integrity..')
+                    loggerLaunchSuite.log('에셋 무결성 검증완료')
+                    setLaunchDetails('라이브러리 무결성 검증중..')
                     break
                 case 'libraries':
                     setLaunchPercentage(80, 100)
-                    loggerLaunchSuite.log('Library validation complete.')
-                    setLaunchDetails('Validating miscellaneous file integrity..')
+                    loggerLaunchSuite.log('라이브러리 무결성 검증됨')
+                    setLaunchDetails('누락된 파일 확인중..')
                     break
                 case 'files':
                     setLaunchPercentage(100, 100)
-                    loggerLaunchSuite.log('File validation complete.')
-                    setLaunchDetails('Downloading files..')
+                    loggerLaunchSuite.log('파일 검증 완료')
+                    setLaunchDetails('파일 다운로드중..')
                     break
             }
         } else if(m.context === 'progress'){
@@ -581,7 +581,7 @@ function dlAsync(login = true){
                     remote.getCurrentWindow().setProgressBar(2)
 
                     // Download done, extracting.
-                    const eLStr = 'Extracting libraries'
+                    const eLStr = '라이브러리 추출중'
                     let dotStr = ''
                     setLaunchDetails(eLStr)
                     progressListener = setInterval(() => {
@@ -605,7 +605,7 @@ function dlAsync(login = true){
                         progressListener = null
                     }
 
-                    setLaunchDetails('Preparing to launch..')
+                    setLaunchDetails('시작 준비중..')
                     break
             }
         } else if(m.context === 'error'){
@@ -615,13 +615,13 @@ function dlAsync(login = true){
                     
                     if(m.error.code === 'ENOENT'){
                         showLaunchFailure(
-                            'Download Error',
-                            'Could not connect to the file server. Ensure that you are connected to the internet and try again.'
+                            '다운로드 오류',
+                            '파일서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.'
                         )
                     } else {
                         showLaunchFailure(
-                            'Download Error',
-                            'Check the console (CTRL + Shift + i) for more details. Please try again.'
+                            '다운로드 오류',
+                            '(CTRL + Shift + i)를 눌러 오류를 확인해주세요.'
                         )
                     }
 
@@ -640,7 +640,7 @@ function dlAsync(login = true){
                 loggerLaunchSuite.error('Error during validation:', m.result)
 
                 loggerLaunchSuite.error('Error during launch', m.result.error)
-                showLaunchFailure('Error During Launch', 'Please check the console (CTRL + Shift + i) for more details.')
+                showLaunchFailure('실행 중 오류가 발생함', '(CTRL + Shift + i)를 눌러 오류를 확인해주세요.')
 
                 allGood = false
             }
@@ -652,7 +652,7 @@ function dlAsync(login = true){
                 const authUser = ConfigManager.getSelectedAccount()
                 loggerLaunchSuite.log(`Sending selected account (${authUser.displayName}) to ProcessBuilder.`)
                 let pb = new ProcessBuilder(serv, versionData, forgeData, authUser, remote.app.getVersion())
-                setLaunchDetails('Launching game..')
+                setLaunchDetails('게임 실행중..')
 
                 // const SERVER_JOINED_REGEX = /\[.+\]: \[CHAT\] [a-zA-Z0-9_]{1,16} joined the game/
                 const SERVER_JOINED_REGEX = new RegExp(`\\[.+\\]: \\[CHAT\\] ${authUser.displayName} joined the game`)
@@ -660,7 +660,7 @@ function dlAsync(login = true){
                 const onLoadComplete = () => {
                     toggleLaunchArea(false)
                     if(hasRPC){
-                        DiscordWrapper.updateDetails('Loading game..')
+                        DiscordWrapper.updateDetails('게임 불러오는 중..')
                     }
                     proc.stdout.on('data', gameStateChange)
                     proc.stdout.removeListener('data', tempListener)
@@ -687,9 +687,9 @@ function dlAsync(login = true){
                 const gameStateChange = function(data){
                     data = data.trim()
                     if(SERVER_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails('Exploring the Realm!')
+                        DiscordWrapper.updateDetails('돌핀 온라인에서 놀아보세요!')
                     } else if(GAME_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails('Sailing to Westeros!')
+                        DiscordWrapper.updateDetails('현실경제서버 돌핀 온라인')
                     }
                 }
 
@@ -697,7 +697,7 @@ function dlAsync(login = true){
                     data = data.trim()
                     if(data.indexOf('Could not find or load main class net.minecraft.launchwrapper.Launch') > -1){
                         loggerLaunchSuite.error('Game launch failed, LaunchWrapper was not downloaded properly.')
-                        showLaunchFailure('Error During Launch', 'The main file, LaunchWrapper, failed to download properly. As a result, the game cannot launch.<br><br>To fix this issue, temporarily turn off your antivirus software and launch the game again.<br><br>If you have time, please <a href="https://github.com/dscalzi/HeliosLauncher/issues">submit an issue</a> and let us know what antivirus software you use. We\'ll contact them and try to straighten things out.')
+                        showLaunchFailure('실행 도중 오류가 발생함', '주 파일인 LaunchWrapper를 제대로 다운로드하지 못했습니다. 따라서 게임을 시작할 수 없습니다.<br><br>입니다.이 문제를 해결하려면 바이러스 백신 소프트웨어를 일시적으로 끄고 게임을 다시 시작하십시오.<br><br>입니다.시간이 되신다면 <a href="https://github.com/dscalzi/HeliosLauncher/issues"> 문제를 해결하고 어떤 바이러스 백신 소프트웨어를 사용하는지 알려주십시오.')
                     }
                 }
 
@@ -709,7 +709,7 @@ function dlAsync(login = true){
                     proc.stdout.on('data', tempListener)
                     proc.stderr.on('data', gameErrorListener)
 
-                    setLaunchDetails('Done. Enjoy the server!')
+                    setLaunchDetails('완료')
 
                     // Init Discord Hook
                     const distro = DistroManager.getDistribution()
@@ -727,7 +727,7 @@ function dlAsync(login = true){
                 } catch(err) {
 
                     loggerLaunchSuite.error('Error during launch', err)
-                    showLaunchFailure('Error During Launch', 'Please check the console (CTRL + Shift + i) for more details.')
+                    showLaunchFailure('실행 도중 오류가 발생함', '(CTRL + Shift + i)를 눌러 오류를 확인해주세요')
 
                 }
             }
@@ -741,7 +741,7 @@ function dlAsync(login = true){
     // Begin Validations
 
     // Validate Forge files.
-    setLaunchDetails('Loading server information..')
+    setLaunchDetails('서버 정보 불러오는 중..')
 
     refreshDistributionIndex(true, (data) => {
         onDistroRefresh(data)
@@ -756,7 +756,7 @@ function dlAsync(login = true){
         }, (err) => {
             loggerLaunchSuite.error('Unable to refresh distribution index.', err)
             if(DistroManager.getDistribution() == null){
-                showLaunchFailure('Fatal Error', 'Could not load a copy of the distribution index. See the console (CTRL + Shift + i) for more details.')
+                showLaunchFailure('중요 오류', '배포인덱스를 복사할 수 없습니다. (CTRL + Shift + i)를 눌러 오류를 확인해주세요.')
 
                 // Disconnect from AssetExec
                 aEx.disconnect()
