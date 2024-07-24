@@ -3,13 +3,14 @@ const discord = document.getElementById('discord')
 const minepg = document.getElementById('minepg')
 
 discord.onclick = () => {
-    shell.openExternal('https://discord.gg/mcdolphin')
+    shell.openExternal('https://discord.gg/NBkXNW7kz7')
 }
 
 minepg.onclick = () => {
-    shell.openExternal('https://minelist.kr/servers/mcdolphin.kr')
+    // shell.openExternal('https://minelist.kr/servers/mcdolphin.kr')
+    alert("Coming soon")
 }
 
 cafe.onclick = () => {
-    shell.openExternal('https://cafe.naver.com/reda7s2x/226')
+    shell.openExternal('https://cafe.naver.com/mutaroleplay')
 }
